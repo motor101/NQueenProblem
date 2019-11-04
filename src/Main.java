@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Main {
 
@@ -10,6 +7,7 @@ public class Main {
     private List<Set<Integer>> queensOnTheSameNormalDiagonal;
     private List<Set<Integer>> queensOnTheSameReverseDiagonal;
     private int[] queenPositionByColumn;
+    private static Random randomNumberGenerator = new Random();
 
     private Main(int queensCount) {
         this.queensCount = queensCount;
@@ -105,21 +103,24 @@ public class Main {
                 if (conflictsCount != 0) {
                     conflictsFound = true;
                     minConflictsCount = conflictsCount;
-                    minConflictsColumn = currentQueenColumn;
+
+                    List<Integer> minConflictsColumnsSet = new ArrayList<>();
 
                     for (int column = 0; column < queensCount; ++column) {
-                        if (column != currentQueenColumn) {
-                            conflictsCount = board.getConflictsCount(queenIndex, column);
+                        conflictsCount = board.getConflictsCount(queenIndex, column);
 
-                            if (conflictsCount < minConflictsCount) {
-                                minConflictsCount = conflictsCount;
-                                minConflictsColumn = column;
-                            }
-                            if (minConflictsCount == 0) {
-                                break;
-                            }
+                        if (conflictsCount < minConflictsCount) {
+                            minConflictsColumnsSet.clear();
+                            minConflictsColumnsSet.add(column);
+                            minConflictsCount = conflictsCount;
+                        }
+                        if (conflictsCount == minConflictsCount) {
+                            minConflictsColumnsSet.add(column);
                         }
                     }
+
+                    minConflictsColumn =
+                            minConflictsColumnsSet.get(randomNumberGenerator.nextInt(minConflictsColumnsSet.size()));
 
                     // swap current value with min value
                     if (minConflictsColumn != currentQueenColumn) {
