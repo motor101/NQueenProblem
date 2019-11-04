@@ -31,6 +31,9 @@ public class Main {
 
             queensOnTheSameColumn.get(queenIndex).add(queenIndex);
             queensOnTheSameNormalDiagonal.get(0).add(queenIndex);
+            if (2 * queenIndex < queensCount) {
+                queensOnTheSameReverseDiagonal.get(2 * queenIndex).add(queenIndex);
+            }
         }
     }
 
@@ -42,23 +45,23 @@ public class Main {
 
         final int currentQueenIsHere = (column == queenPositionByColumn[row]) ? 1 : 0;
 
-        int queensCount = queensOnTheSameColumn.get(column).size();
+        int conflictingQueensCount = queensOnTheSameColumn.get(column).size();
 
-        if (queensCount > 0) {
-            conflictsCount += queensCount - currentQueenIsHere;
+        if (conflictingQueensCount > 0) {
+            conflictsCount += conflictingQueensCount - currentQueenIsHere;
         }
 
         if (normalDiagonalIndex >= 0) {
-            queensCount = queensOnTheSameNormalDiagonal.get(normalDiagonalIndex).size();
-            if (queensCount > 0) {
-                conflictsCount += queensCount - currentQueenIsHere;
+            conflictingQueensCount = queensOnTheSameNormalDiagonal.get(normalDiagonalIndex).size();
+            if (conflictingQueensCount > 0) {
+                conflictsCount += conflictingQueensCount - currentQueenIsHere;
             }
         }
 
-        if (reverseDiagonalIndex < queensCount) {
-            queensCount = queensOnTheSameReverseDiagonal.get(reverseDiagonalIndex).size();
-            if (queensCount > 0) {
-                conflictsCount += queensCount - currentQueenIsHere;
+        if (reverseDiagonalIndex < this.queensCount) {
+            conflictingQueensCount = queensOnTheSameReverseDiagonal.get(reverseDiagonalIndex).size();
+            if (conflictingQueensCount > 0) {
+                conflictsCount += conflictingQueensCount - currentQueenIsHere;
             }
         }
 
@@ -124,11 +127,11 @@ public class Main {
                         board.queensOnTheSameColumn.get(minConflictsColumn).add(queenIndex);
 
                         if (normalDiagonalIndex >= 0) {
-                            board.queensOnTheSameNormalDiagonal.get(minConflictsColumn).add(queenIndex);
+                            board.queensOnTheSameNormalDiagonal.get(normalDiagonalIndex).add(queenIndex);
                         }
 
                         if (reverseDiagonalIndex < queensCount) {
-                            board.queensOnTheSameReverseDiagonal.get(minConflictsColumn).add(queenIndex);
+                            board.queensOnTheSameReverseDiagonal.get(reverseDiagonalIndex).add(queenIndex);
                         }
 
                         board.queenPositionByColumn[queenIndex] = minConflictsColumn;
