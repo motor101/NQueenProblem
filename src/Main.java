@@ -14,13 +14,36 @@ public class Main {
     private Main(int queensCount) {
         this.queensCount = queensCount;
         queensOnTheSameColumn = new ArrayList<Set<Integer>>();
+
+//        Normal diagonals
+//            0 1 2 3
+//            _______
+//        0 | 3 4 5 6
+//        1 | 2 3 4 5
+//        2 | 1 2 3 4
+//        3 | 0 1 2 3
+//        The element with index (0,0) is on diagonal 3
+//        The element with index (2,3) is on diagonal 4
         queensOnTheSameNormalDiagonal = new ArrayList<Set<Integer>>();
+
+//        Reversed diagonals
+////            0 1 2 3
+////            _______
+////        0 | 0 1 2 3
+////        1 | 1 2 3 4
+////        2 | 2 3 4 5
+////        3 | 3 4 5 6
+////        The element with index (0,0) is on diagonal 0
+////        The element with index (2,3) is on diagonal 5
         queensOnTheSameReverseDiagonal = new ArrayList<Set<Integer>>();
 
         queenPositionByColumn = new int[queensCount];
 
         for (int queenIndex = 0; queenIndex < queensCount; ++queenIndex) {
             queensOnTheSameColumn.add(new HashSet<Integer>());
+        }
+
+        for (int i = 0; i < (2 * queensCount - 1); i++) {
             queensOnTheSameNormalDiagonal.add(new HashSet<Integer>());
             queensOnTheSameReverseDiagonal.add(new HashSet<Integer>());
         }
@@ -30,39 +53,33 @@ public class Main {
             queenPositionByColumn[queenIndex] = queenIndex;
 
             queensOnTheSameColumn.get(queenIndex).add(queenIndex);
-            queensOnTheSameNormalDiagonal.get(0).add(queenIndex);
-            if (2 * queenIndex < queensCount) {
-                queensOnTheSameReverseDiagonal.get(2 * queenIndex).add(queenIndex);
-            }
+
+            queensOnTheSameNormalDiagonal.get(queensCount - 1).add(queenIndex);
+            queensOnTheSameReverseDiagonal.get(2 * queenIndex).add(queenIndex);
         }
     }
 
     // how many conflicts would the current queen have if it was on this column
     private int getConflictsCount(int row, int column) {
         int conflictsCount = 0;
-        int normalDiagonalIndex = column - row;
+        int normalDiagonalIndex = column - row + (queensCount - 1);
         int reverseDiagonalIndex = column + row;
 
         final int currentQueenIsHere = (column == queenPositionByColumn[row]) ? 1 : 0;
 
         int conflictingQueensCount = queensOnTheSameColumn.get(column).size();
-
         if (conflictingQueensCount > 0) {
             conflictsCount += conflictingQueensCount - currentQueenIsHere;
         }
 
-        if (normalDiagonalIndex >= 0) {
-            conflictingQueensCount = queensOnTheSameNormalDiagonal.get(normalDiagonalIndex).size();
-            if (conflictingQueensCount > 0) {
-                conflictsCount += conflictingQueensCount - currentQueenIsHere;
-            }
+        conflictingQueensCount = queensOnTheSameNormalDiagonal.get(normalDiagonalIndex).size();
+        if (conflictingQueensCount > 0) {
+            conflictsCount += conflictingQueensCount - currentQueenIsHere;
         }
 
-        if (reverseDiagonalIndex < this.queensCount) {
-            conflictingQueensCount = queensOnTheSameReverseDiagonal.get(reverseDiagonalIndex).size();
-            if (conflictingQueensCount > 0) {
-                conflictsCount += conflictingQueensCount - currentQueenIsHere;
-            }
+        conflictingQueensCount = queensOnTheSameReverseDiagonal.get(reverseDiagonalIndex).size();
+        if (conflictingQueensCount > 0) {
+            conflictsCount += conflictingQueensCount - currentQueenIsHere;
         }
 
         return conflictsCount;
@@ -106,33 +123,22 @@ public class Main {
 
                     // swap current value with min value
                     if (minConflictsColumn != currentQueenColumn) {
+
                         // evaluate current diagonal indexes
-                        int normalDiagonalIndex = currentQueenColumn - queenIndex;
+                        int normalDiagonalIndex = currentQueenColumn - queenIndex + (queensCount - 1);
                         int reverseDiagonalIndex = currentQueenColumn + queenIndex;
 
                         board.queensOnTheSameColumn.get(currentQueenColumn).remove(queenIndex);
-
-                        if (normalDiagonalIndex >= 0) {
-                            board.queensOnTheSameNormalDiagonal.get(normalDiagonalIndex).remove(queenIndex);
-                        }
-
-                        if (reverseDiagonalIndex < queensCount) {
-                            board.queensOnTheSameReverseDiagonal.get(reverseDiagonalIndex).remove(queenIndex);
-                        }
+                        board.queensOnTheSameNormalDiagonal.get(normalDiagonalIndex).remove(queenIndex);
+                        board.queensOnTheSameReverseDiagonal.get(reverseDiagonalIndex).remove(queenIndex);
 
                         // evaluate new diagonal indexes
-                        normalDiagonalIndex = minConflictsColumn - queenIndex;
+                        normalDiagonalIndex = minConflictsColumn - queenIndex + (queensCount - 1);
                         reverseDiagonalIndex = minConflictsColumn + queenIndex;
 
                         board.queensOnTheSameColumn.get(minConflictsColumn).add(queenIndex);
-
-                        if (normalDiagonalIndex >= 0) {
-                            board.queensOnTheSameNormalDiagonal.get(normalDiagonalIndex).add(queenIndex);
-                        }
-
-                        if (reverseDiagonalIndex < queensCount) {
-                            board.queensOnTheSameReverseDiagonal.get(reverseDiagonalIndex).add(queenIndex);
-                        }
+                        board.queensOnTheSameNormalDiagonal.get(normalDiagonalIndex).add(queenIndex);
+                        board.queensOnTheSameReverseDiagonal.get(reverseDiagonalIndex).add(queenIndex);
 
                         board.queenPositionByColumn[queenIndex] = minConflictsColumn;
                     }
