@@ -83,6 +83,19 @@ public class Main {
         return conflictsCount;
     }
 
+    private void showBoard() {
+        for (int queenIndex = 0; queenIndex < queensCount; queenIndex++) {
+            for (int column = 0; column < queensCount; column++) {
+                if (column == queenPositionByColumn[queenIndex]) {
+                    System.out.print("* ");
+                } else {
+                    System.out.print("_ ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
     public static void main(String[] args) {
         int queensCount = Integer.parseInt(args[0]);
 
@@ -147,10 +160,6 @@ public class Main {
             }
         } while (conflictsFound);
 
-        // write solution on standard output stream
-        for (int i = 0; i < queensCount; ++i) {
-            System.out.println(board.queenPositionByColumn[i]);
-        }
-
+        board.showBoard();
     }
 }
